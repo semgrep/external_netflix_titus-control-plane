@@ -53,6 +53,7 @@ public class MachineSpringResource {
 
     @ApiOperation("Get all machines")
     @GetMapping
+    @Secured("user")
     public MachineQueryResult getMachines(@RequestParam MultiValueMap<String, String> queryParameters) {
         QueryRequest.Builder queryBuilder = QueryRequest.newBuilder();
         Page page = RestUtil.createPage(queryParameters);
@@ -66,6 +67,7 @@ public class MachineSpringResource {
 
     @GetMapping(path = "/{machineId}")
     @ApiOperation("Get single machine")
+    @Secured("user")
     public Machine getMachine(@PathVariable("machineId") String machineId) {
         return machineServiceStub.getMachine(Id.newBuilder().setId(machineId).build()).block(TIMEOUT);
     }

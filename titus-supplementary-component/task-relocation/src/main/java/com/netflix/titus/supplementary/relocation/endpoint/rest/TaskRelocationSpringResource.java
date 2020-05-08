@@ -66,6 +66,7 @@ public class TaskRelocationSpringResource {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/plans", produces = "application/json")
+    @Secured("user")
     public TaskRelocationPlans getCurrentTaskRelocationPlans(@RequestParam(name = FILTER_JOB_IDS, required = false) String jobIds,
                                                              @RequestParam(name = FILTER_TASK_IDS, required = false) String taskIds,
                                                              @RequestParam(name = FILTER_APPLICATION_NAME, required = false) String applicationName,
@@ -80,6 +81,7 @@ public class TaskRelocationSpringResource {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/plans/{taskId}", produces = "application/json")
+    @Secured("user")
     public com.netflix.titus.grpc.protogen.TaskRelocationPlan getTaskRelocationPlan(@PathVariable("taskId") String taskId) {
         TaskRelocationPlan plan = relocationWorkflowExecutor.getPlannedRelocations().get(taskId);
         if (plan != null) {
@@ -89,12 +91,14 @@ public class TaskRelocationSpringResource {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/executions", produces = "application/json")
+    @Secured("user")
     public TaskRelocationExecutions getTaskRelocationResults() {
         List<TaskRelocationStatus> coreResults = new ArrayList<>(relocationWorkflowExecutor.getLastEvictionResults().values());
         return RelocationGrpcModelConverters.toGrpcTaskRelocationExecutions(coreResults);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/executions/{taskId}", produces = "application/json")
+    @Secured("user")
     public TaskRelocationExecution getTaskRelocationResult(@PathVariable("taskId") String taskId) {
         TaskRelocationStatus latest = relocationWorkflowExecutor.getLastEvictionResults().get(taskId);
         List<TaskRelocationStatus> archived = archiveStore.getTaskRelocationStatusList(taskId).block();

@@ -90,6 +90,7 @@ public class JobManagementSpringResource {
 
     @ApiOperation("Create a job")
     @PostMapping(path = "/jobs")
+    @Secured("admin")
     public ResponseEntity<JobId> createJob(@RequestBody JobDescriptor jobDescriptor) {
         String jobId = Responses.fromSingleValueObservable(jobServiceGateway.createJob(jobDescriptor, resolveCallMetadata()));
         return ResponseEntity.status(HttpStatus.CREATED).body(JobId.newBuilder().setId(jobId).build());
@@ -97,6 +98,7 @@ public class JobManagementSpringResource {
 
     @ApiOperation("Update an existing job's capacity")
     @PutMapping(path = "/jobs/{jobId}/instances")
+    @Secured("admin")
     public ResponseEntity<Void> setInstances(@PathVariable("jobId") String jobId,
                                              @RequestBody Capacity capacity) {
         JobCapacityUpdate jobCapacityUpdate = JobCapacityUpdate.newBuilder()
@@ -108,6 +110,7 @@ public class JobManagementSpringResource {
 
     @ApiOperation("Update an existing job's capacity. Optional attributes min / max / desired are supported.")
     @PutMapping(path = "/jobs/{jobId}/capacityAttributes")
+    @Secured("admin")
     public ResponseEntity<Void> setCapacityWithOptionalAttributes(@PathVariable("jobId") String jobId,
                                                                   @RequestBody JobCapacityWithOptionalAttributes capacity) {
         JobCapacityUpdateWithOptionalAttributes jobCapacityUpdateWithOptionalAttributes = JobCapacityUpdateWithOptionalAttributes.newBuilder()
@@ -119,6 +122,7 @@ public class JobManagementSpringResource {
 
     @ApiOperation("Update an existing job's processes")
     @PutMapping(path = "/jobs/{jobId}/jobprocesses")
+    @Secured("admin")
     public ResponseEntity<Void> setJobProcesses(@PathVariable("jobId") String jobId,
                                                 @RequestBody ServiceJobSpec.ServiceJobProcesses jobProcesses) {
         JobProcessesUpdate jobProcessesUpdate = JobProcessesUpdate.newBuilder()
@@ -130,6 +134,7 @@ public class JobManagementSpringResource {
 
     @ApiOperation("Update job's disruption budget")
     @PutMapping(path = "/jobs/{jobId}/disruptionBudget")
+    @Secured("admin")
     public ResponseEntity<Void> setJobDisruptionBudget(@PathVariable("jobId") String jobId,
                                                        @RequestBody JobDisruptionBudget jobDisruptionBudget) {
         JobDisruptionBudgetUpdate request = JobDisruptionBudgetUpdate.newBuilder()
@@ -141,6 +146,7 @@ public class JobManagementSpringResource {
 
     @ApiOperation("Update attributes of a job")
     @PutMapping(path = "/jobs/{jobId}/attributes")
+    @Secured("admin")
     public ResponseEntity<Void> updateJobAttributes(@PathVariable("jobId") String jobId,
                                                     @RequestBody JobAttributesUpdate request) {
         JobAttributesUpdate sanitizedRequest;
@@ -157,6 +163,7 @@ public class JobManagementSpringResource {
 
     @ApiOperation("Delete attributes of a job with the specified key names")
     @DeleteMapping(path = "/jobs/{jobId}/attributes")
+    @Secured("admin")
     public ResponseEntity<Void> deleteJobAttributes(@PathVariable("jobId") String jobId, @RequestParam("keys") String delimitedKeys) {
         if (Strings.isNullOrEmpty(delimitedKeys)) {
             throw TitusServiceException.invalidArgument("Path parameter 'keys' cannot be empty");
@@ -176,6 +183,7 @@ public class JobManagementSpringResource {
 
     @ApiOperation("Update an existing job's status")
     @PostMapping(path = "/jobs/{jobId}/enable")
+    @Secured("admin")
     public ResponseEntity<Void> enableJob(@PathVariable("jobId") String jobId) {
         JobStatusUpdate jobStatusUpdate = JobStatusUpdate.newBuilder()
                 .setId(jobId)
@@ -186,6 +194,7 @@ public class JobManagementSpringResource {
 
     @ApiOperation("Update an existing job's status")
     @PostMapping(path = "/jobs/{jobId}/disable")
+    @Secured("admin")
     public ResponseEntity<Void> disableJob(@PathVariable("jobId") String jobId) {
         JobStatusUpdate jobStatusUpdate = JobStatusUpdate.newBuilder()
                 .setId(jobId)
@@ -196,11 +205,13 @@ public class JobManagementSpringResource {
 
     @ApiOperation("Find the job with the specified ID")
     @GetMapping(path = "/jobs/{jobId}", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    @Secured("admin")
     public Job findJob(@PathVariable("jobId") String jobId) {
         return Responses.fromSingleValueObservable(jobServiceGateway.findJob(jobId));
     }
 
     @ApiOperation("Find jobs")
+    @Secured("admin")
     @GetMapping(path = "/jobs", produces = MediaType.APPLICATION_JSON_VALUE)
     public JobQueryResult findJobs(@RequestParam MultiValueMap<String, String> queryParameters) {
         JobQuery.Builder queryBuilder = JobQuery.newBuilder();
@@ -214,17 +225,20 @@ public class JobManagementSpringResource {
 
     @ApiOperation("Kill a job")
     @DeleteMapping(path = "/jobs/{jobId}")
+    @Secured("admin")
     public ResponseEntity<Void> killJob(@PathVariable("jobId") String jobId) {
         return Responses.fromCompletable(jobServiceGateway.killJob(jobId), HttpStatus.NO_CONTENT);
     }
 
     @ApiOperation("Find the task with the specified ID")
     @GetMapping(path = "/tasks/{taskId}")
+    @Secured("admin")
     public Task findTask(@PathVariable("taskId") String taskId) {
         return Responses.fromSingleValueObservable(jobServiceGateway.findTask(taskId));
     }
 
     @ApiOperation("Find tasks")
+    @Secured("admin")
     @GetMapping(path = "/tasks")
     public TaskQueryResult findTasks(@RequestParam MultiValueMap<String, String> queryParameters) {
         TaskQuery.Builder queryBuilder = TaskQuery.newBuilder();
@@ -237,6 +251,7 @@ public class JobManagementSpringResource {
     }
 
     @ApiOperation("Kill task")
+    @Secured("admin")
     @DeleteMapping(path = "/tasks/{taskId}")
     public ResponseEntity<Void> killTask(
             @PathVariable("taskId") String taskId,
@@ -252,6 +267,7 @@ public class JobManagementSpringResource {
     }
 
     @ApiOperation("Update attributes of a task")
+    @Secured("admin")
     @PutMapping(path = "/tasks/{taskId}/attributes")
     public ResponseEntity<Void> updateTaskAttributes(@PathVariable("taskId") String taskId,
                                                      @RequestBody TaskAttributesUpdate request) {
@@ -269,6 +285,7 @@ public class JobManagementSpringResource {
 
     @ApiOperation("Delete attributes of a task with the specified key names")
     @DeleteMapping(path = "/tasks/{taskId}/attributes")
+    @Secured("admin")
     public ResponseEntity<Void> deleteTaskAttributes(@PathVariable("taskId") String taskId, @RequestParam("keys") String delimitedKeys) {
         if (Strings.isNullOrEmpty(delimitedKeys)) {
             throw TitusServiceException.invalidArgument("Path parameter 'keys' cannot be empty");
@@ -288,6 +305,7 @@ public class JobManagementSpringResource {
 
     @ApiOperation("Move task to another job")
     @PostMapping(path = "/tasks/move")
+    @Secured("admin")
     public ResponseEntity<Void> moveTask(@RequestBody TaskMoveRequest taskMoveRequest) {
         return Responses.fromCompletable(jobServiceGateway.moveTask(taskMoveRequest), HttpStatus.NO_CONTENT);
     }

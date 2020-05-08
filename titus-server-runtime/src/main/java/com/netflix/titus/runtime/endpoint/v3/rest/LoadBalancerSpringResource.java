@@ -66,6 +66,7 @@ public class LoadBalancerSpringResource {
 
     @ApiOperation("Find the load balancer(s) with the specified ID")
     @GetMapping(path = "/{jobId}")
+    @Secured("admin")
     public GetJobLoadBalancersResult getJobLoadBalancers(@PathVariable("jobId") String jobId) {
         return Responses.fromSingleValueObservable(loadBalancerService.getLoadBalancers(
                 JobId.newBuilder()
@@ -75,6 +76,7 @@ public class LoadBalancerSpringResource {
 
     @ApiOperation("Get all load balancers")
     @GetMapping
+    @Secured("admin")
     public GetAllLoadBalancersResult getAllLoadBalancers(@RequestParam MultiValueMap<String, String> queryParameters) {
         Page page = RestUtil.createPage(queryParameters);
         logPageNumberUsage(systemLog, callMetadataResolver, getClass().getSimpleName(), "getAllLoadBalancers", page);
@@ -86,6 +88,7 @@ public class LoadBalancerSpringResource {
 
     @ApiOperation("Add a load balancer")
     @PostMapping
+    @Secured("admin")
     public ResponseEntity<Void> addLoadBalancer(
             @RequestParam("jobId") String jobId,
             @RequestParam("loadBalancerId") String loadBalancerId) {

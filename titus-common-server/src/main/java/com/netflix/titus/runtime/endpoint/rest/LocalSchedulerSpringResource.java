@@ -43,11 +43,13 @@ public class LocalSchedulerSpringResource {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/schedules", produces = "application/json")
+    @Secured("user")
     public List<ScheduleRepresentation> getActiveSchedules() {
         return localScheduler.getActiveSchedules().stream().map(EvictionRepresentations::toRepresentation).collect(Collectors.toList());
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/schedules/{name}", produces = "application/json")
+    @Secured("user")
     public ScheduleRepresentation getActiveSchedule(@PathVariable("name") String name) {
         return localScheduler.getActiveSchedules().stream()
                 .filter(s -> s.getDescriptor().getName().equals(name))
@@ -57,6 +59,7 @@ public class LocalSchedulerSpringResource {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/archived", produces = "application/json")
+    @Secured("archived")
     public List<ScheduleRepresentation> getArchivedSchedules() {
         return localScheduler.getArchivedSchedules().stream()
                 .map(EvictionRepresentations::toRepresentation)
@@ -64,6 +67,7 @@ public class LocalSchedulerSpringResource {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/archived/{name}", produces = "application/json")
+    @Secured("user")
     public ScheduleRepresentation getArchivedSchedule(@PathVariable("name") String name) {
         return localScheduler.getArchivedSchedules().stream()
                 .filter(s -> s.getDescriptor().getName().equals(name))

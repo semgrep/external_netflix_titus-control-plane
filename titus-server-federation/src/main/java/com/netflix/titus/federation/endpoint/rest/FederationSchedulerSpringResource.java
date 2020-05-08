@@ -42,6 +42,7 @@ public class FederationSchedulerSpringResource {
 
     @GetMapping(path = "/results/{id}")
     @ApiOperation("Find scheduling result for a task")
+    @Secured("user")
     public SchedulingResultEvent findLastSchedulingResult(@PathVariable("id") String taskId) {
         return Responses.fromMono(schedulerService.findLastSchedulingResult(taskId));
     }

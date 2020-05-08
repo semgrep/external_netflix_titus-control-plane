@@ -99,11 +99,13 @@ public class ScenarioSpringResource {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/scenarios", produces = MediaType.APPLICATION_JSON)
+    @Secured("user")
     public List<ScenarioRepresentation> getScenarios() {
         return new ArrayList<>(SCENARIOS.values());
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/scenarios/{name}", produces = MediaType.APPLICATION_JSON)
+    @Secured("user")
     public ScenarioRepresentation getScenario(@PathVariable("name") String name) {
         ScenarioRepresentation scenario = SCENARIOS.get(name);
         if (scenario == null) {
@@ -113,6 +115,7 @@ public class ScenarioSpringResource {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/executions", consumes = MediaType.APPLICATION_JSON)
+    @Secured("user")
     public Response startScenario(@RequestBody StartScenarioRequest request) throws URISyntaxException {
         String jobPlan = request.getJobPlan();
         JobExecutableGenerator jobExecutableGenerator;
@@ -159,6 +162,7 @@ public class ScenarioSpringResource {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/executions", produces = MediaType.APPLICATION_JSON)
+    @Secured("user")
     public List<ScenarioExecutionRepresentation> getScenarioExecutions() {
         return orchestrator.getScenarioRunners().values().stream()
                 .map(ScenarioSpringResource::toRepresentation)
@@ -166,6 +170,7 @@ public class ScenarioSpringResource {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/executions/{id}", produces = MediaType.APPLICATION_JSON)
+    @Secured("user")
     public ScenarioExecutionRepresentation getScenarioExecutions(@PathVariable("id") String id) {
         ScenarioRunner runner = orchestrator.getScenarioRunners().get(id);
         if (runner == null) {
@@ -175,6 +180,7 @@ public class ScenarioSpringResource {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, path = "/executions/{id}")
+    @Secured("user")
     public Response stopScenarioExecution(@PathVariable("id") String id) {
         ScenarioRunner runner = orchestrator.getScenarioRunners().get(id);
         if (runner == null) {
@@ -185,6 +191,7 @@ public class ScenarioSpringResource {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, path = "/executions")
+    @Secured("user")
     public Response stopAllScenarios(@RequestParam(name = "orphaned", required = false) boolean orphaned) {
         orchestrator.getScenarioRunners().forEach((id, runner) -> orchestrator.stopScenarioExecution(id));
         if (orphaned) {
@@ -194,12 +201,14 @@ public class ScenarioSpringResource {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, path = "/agents")
+    @Secured("user")
     public Response removeAllAgents() {
         agentTerminator.doClean();
         return Response.noContent().build();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/report/metrics", produces = MediaType.APPLICATION_JSON)
+    @Secured("user")
     public Map<String, Object> getMetrics() {
         MetricsCollector metrics = orchestrator.getMetricsCollector();
 

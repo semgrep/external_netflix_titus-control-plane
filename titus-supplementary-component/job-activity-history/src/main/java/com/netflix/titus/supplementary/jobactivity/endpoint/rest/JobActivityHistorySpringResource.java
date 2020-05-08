@@ -29,11 +29,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class JobActivityHistorySpringResource {
 
     @RequestMapping(method = RequestMethod.GET, path = "/job/{id}", produces = "application/json")
+    @Secured("user")
     public JobActivityQueryResult getJobActivityRecord(@PathVariable("id") String id) {
         return TestData.newJobActivityQueryResult();
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/task/{id}", produces = "application/json")
+    @Secured("user")
     public TaskActivityQueryResult getTaskActivityRecord(@PathVariable("id") String id) {
         return TestData.newTaskActivityQueryResult();
     }

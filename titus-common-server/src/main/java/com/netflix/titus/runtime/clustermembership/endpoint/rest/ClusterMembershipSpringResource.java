@@ -44,11 +44,13 @@ public class ClusterMembershipSpringResource {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/members", produces = "application/json")
+    @Secured("user")
     public ClusterMembershipRevisions getMembers() {
         return clusterMembershipService.getMembers().block(TIMEOUT);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/members/{memberId}", produces = "application/json")
+    @Secured("user")
     public ClusterMembershipRevision getMember(@PathVariable("memberId") String memberId) {
         return clusterMembershipService.getMember(MemberId.newBuilder().setId(memberId).build()).block(TIMEOUT);
     }
@@ -63,6 +65,7 @@ public class ClusterMembershipSpringResource {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, path = "/members/{memberId}/labels", consumes = "application/json", produces = "application/json")
+    @Secured("user")
     public ClusterMembershipRevision deleteMemberLabels(@PathVariable("memberId") String memberId,
                                                         @RequestBody DeleteMemberLabelsRequest request) {
         if (request.getMemberId().equals(memberId)) {
@@ -72,6 +75,7 @@ public class ClusterMembershipSpringResource {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/members/{memberId}/enable", consumes = "application/json", produces = "application/json")
+    @Secured("user")
     public ClusterMembershipRevision enableMember(@PathVariable("memberId") String memberId,
                                                   @RequestBody EnableMemberRequest request) {
         if (request.getMemberId().equals(memberId)) {
@@ -81,6 +85,7 @@ public class ClusterMembershipSpringResource {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/members/{memberId}/stopBeingLeader")
+    @Secured("user")
     public void stopBeingLeader() {
         clusterMembershipService.stopBeingLeader().block(TIMEOUT);
     }

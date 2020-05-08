@@ -63,6 +63,7 @@ public class FederationV2CapacityGroupSpringResource {
      * @return a collection of application SLAs or empty array if non present
      */
     @GetMapping
+    @Secured("user")
     public List<ApplicationSlaRepresentation> getApplicationSLAs(@RequestParam(name = "extended", defaultValue = "false") boolean extended) {
         Either<List<ApplicationSlaRepresentation>, WebApplicationException> result = CellWebClientConnectorUtil.doGetAndMerge(
                 cellWebClientConnector,
